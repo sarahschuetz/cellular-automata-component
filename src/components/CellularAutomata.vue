@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
     Cellular Automata Component
     <div>{{ test }}</div>
   </div>

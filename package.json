@@ -12,15 +12,15 @@
     "url": "https://github.com/sarahschuetz/cellular-automata-component/issues"
   },
   "homepage": "https://github.com/sarahschuetz/cellular-automata-component#readme",
-  "main": "index.js",
+  "main": "./dist/cellular-automata.min.js",
   "scripts": {
     "build": "vue-cli-service build --target wc --name cellular-automata ./src/main.js"
   },
   "dependencies": {
-      "core-js": "^3.6.5",
-      "vue": "^2.6.11"
-    },
-    "devDependencies": {
+    "core-js": "^3.6.5",
+    "vue": "^2.6.13"
+  },
+  "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.0",
     "@vue/cli-plugin-eslint": "^4.5.0",
     "@vue/cli-service": "^4.5.0",

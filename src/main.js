@@ -1,7 +1,8 @@
-import Vue from 'vue';
-import wrap from '@vue/web-component-wrapper';
-import CellularAutomata from './components/CellularAutomata';
+import Vue from 'vue'
+import App from './App.vue'
 
-const CellularAutomataComponent = wrap(Vue, CellularAutomata);
+Vue.config.productionTip = false
 
-window.customElements.define('cellular-automata', CellularAutomataComponent);
+new Vue({
+  render: h => h(App),
+}).$mount('#app')

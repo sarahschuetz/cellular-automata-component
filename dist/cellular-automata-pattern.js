@@ -695,14 +695,345 @@ function normalizeComponent (
   }
 }
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"7c389f7a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CellularAutomata.vue?vue&type=template&id=53b18775&shadow
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._v(" Cellular Automata Component "),_c('div',[_vm._v(_vm._s(_vm.test))])])}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"7c389f7a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CellularAutomataPattern.vue?vue&type=template&id=2f399a6a&shadow
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[(_vm.renderType === 'canvas')?_c('canvas',{ref:"element",style:({
+        backgroundColor: _vm.backgroundColor
+    }),attrs:{"width":_vm.width,"height":_vm.height}}):(_vm.renderType === 'svg')?_c('svg',{ref:"element"}):_vm._e(),_c('div',[_vm._v("Rule: "+_vm._s(_vm.rule))])])}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/CellularAutomata.vue?vue&type=template&id=53b18775&shadow
+// CONCATENATED MODULE: ./src/components/CellularAutomataPattern.vue?vue&type=template&id=2f399a6a&shadow
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CellularAutomata.vue?vue&type=script&lang=js&shadow
+// CONCATENATED MODULE: ./src/algorithm/Cell.js
+const STATE_ALIVE = 1;
+const STATE_DEAD = 0;
+
+class Cell {
+  constructor(color) {
+    this.color = color;
+    this.x = 0;
+    this.y = 0;
+    this.activeState = STATE_DEAD;
+    this.livingNeighbours = 0;
+  }
+
+  setX(value) {
+    this.x = value;
+  }
+
+  setY(value) {
+    this.y = value;
+  }
+
+  setActiveState(value) {
+    this.activeState = value;
+  }
+
+  setLivingNeighbours(value) {
+    this.livingNeighbours = value;
+  }
+
+  getColor() {
+    return this.color;
+  }
+
+  isOverpopulated() {
+    return this.livingNeighbours >= 4;
+  }
+
+  isLonely() {
+    return this.livingNeighbours <= 1;
+  }
+
+  isDead() {
+    return this.activeState === STATE_DEAD;
+  }
+
+  isAlive() {
+    return this.activeState === STATE_ALIVE;
+  }
+
+  birth() {
+    this.activeState = STATE_ALIVE;
+  }
+
+  death() {
+    this.activeState = STATE_DEAD;
+  }
+
+  liveOrDie() {
+    if (this.isDead() && this.livingNeighbours === 3) {
+      return STATE_ALIVE;
+    }
+
+    if (this.isAlive() && (this.isOverpopulated() || this.isLonely())) {
+      return STATE_DEAD;
+    }
+
+    return this.activeState;
+  }
+
+}
+
+/* harmony default export */ var algorithm_Cell = (Cell);
+// CONCATENATED MODULE: ./src/algorithm/CanvasAnimationScript.js
+const defaultConfig = {
+  fillStyle: '#000'
+};
+
+class CanvasAnimationScript {
+  constructor(customConfig = {}) {
+    const config = { ...defaultConfig,
+      ...customConfig
+    };
+    this.fillStyle = config.fillStyle;
+  }
+
+  init(canvas, context) {
+    this.canvas = canvas;
+    this.context = context;
+    this.context.fillStyle = this.fillStyle;
+    this.cumDeltaTime = 0;
+  }
+
+  update(deltaTime) {
+    this.cumDeltaTime += deltaTime;
+  }
+
+}
+
+/* harmony default export */ var algorithm_CanvasAnimationScript = (CanvasAnimationScript);
+// CONCATENATED MODULE: ./src/errors/BaseClassError.js
+class BaseClassError extends Error {
+  constructor(className, message = null) {
+    super(message || `Don't use base class ${className} directly, extend class before instancing it.`);
+  }
+
+}
+
+/* harmony default export */ var errors_BaseClassError = (BaseClassError);
+// CONCATENATED MODULE: ./src/algorithm/CellGrid.js
+
+
+
+const CellGrid_defaultConfig = {
+  pixelSize: 6,
+  interval: 0.1,
+  useFutureArray: true,
+  color: '#000'
+};
+
+class CellGrid_CellGrid extends algorithm_CanvasAnimationScript {
+  constructor(customConfig = {}) {
+    super(customConfig);
+    const config = { ...CellGrid_defaultConfig,
+      ...customConfig
+    };
+    this.pixelSize = config.pixelSize;
+    this.interval = Math.max(CellGrid_defaultConfig.interval, config.interval);
+    this.useFutureArray = config.useFutureArray;
+    this.color = config.color;
+  }
+
+  init(canvas, context) {
+    super.init(canvas, context);
+    this.initGrid();
+    this.initPixels();
+  }
+
+  update(deltaTime) {
+    super.update(deltaTime);
+
+    if (this.cumDeltaTime > this.interval) {
+      this.cumDeltaTime = 0;
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.runAnimationAlgorithm(deltaTime);
+
+      if (this.useFutureArray) {
+        this.switchFuturePixelsToCurrentPixels();
+      }
+    }
+  }
+
+  switchFuturePixelsToCurrentPixels() {
+    this.tempPixelArray = this.currentPixelArray;
+    this.currentPixelArray = this.futurePixelArray;
+    this.futurePixelArray = this.tempPixelArray;
+  }
+
+  runAnimationAlgorithm() {
+    throw new errors_BaseClassError(this.constructor.name);
+  }
+
+  initGrid() {
+    this.grid = {};
+    this.grid.cols = Math.ceil(this.canvas.width / this.pixelSize);
+    this.grid.rows = Math.ceil(this.canvas.height / this.pixelSize);
+    this.currentPixelArray = Array.from(new Array(this.grid.cols), () => Array.from(new Array(this.grid.rows), () => new algorithm_Cell(this.color)));
+
+    if (this.useFutureArray) {
+      this.futurePixelArray = Array.from(new Array(this.grid.cols), () => Array.from(new Array(this.grid.rows), () => new algorithm_Cell(this.color)));
+      this.tempPixelArray = null;
+    }
+  }
+
+  initPixels() {
+    this.currentPixelArray[0].forEach((row, rowIndex) => {
+      this.currentPixelArray.forEach((col, colIndex) => {
+        this.currentPixelArray[colIndex][rowIndex].setX(colIndex * this.pixelSize);
+        this.currentPixelArray[colIndex][rowIndex].setY(rowIndex * this.pixelSize);
+
+        if (this.useFutureArray) {
+          this.futurePixelArray[colIndex][rowIndex].setX(colIndex * this.pixelSize);
+          this.futurePixelArray[colIndex][rowIndex].setY(rowIndex * this.pixelSize);
+        }
+      });
+    });
+  }
+
+  drawCell(cell) {
+    this.context.fillStyle = cell.getColor();
+    this.context.beginPath();
+    this.context.rect(cell.x, cell.y, this.pixelSize, this.pixelSize);
+    this.context.fill();
+  }
+
+  getCellIfExists(colIndex, rowIndex) {
+    if (colIndex >= 0 && colIndex < this.currentPixelArray.length && rowIndex >= 0 && rowIndex < this.currentPixelArray[0].length) {
+      return this.currentPixelArray[colIndex][rowIndex];
+    }
+
+    return null;
+  }
+
+  getCellRepeated(colIndex, rowIndex) {
+    let x = colIndex;
+    let y = rowIndex;
+
+    if (colIndex < 0) {
+      x += this.currentPixelArray.length;
+    }
+
+    if (colIndex >= this.currentPixelArray.length) {
+      x -= this.currentPixelArray.length;
+    }
+
+    if (rowIndex < 0) {
+      y += this.currentPixelArray[0].length;
+    }
+
+    if (rowIndex >= this.currentPixelArray[0].length) {
+      y -= this.currentPixelArray[0].length;
+    }
+
+    return this.currentPixelArray[x][y];
+  }
+
+}
+
+/* harmony default export */ var algorithm_CellGrid = (CellGrid_CellGrid);
+// CONCATENATED MODULE: ./src/algorithm/Pattern.js
+
+const Pattern_defaultConfig = {
+  rule: 1,
+  rules: null
+};
+
+class Pattern_Pattern extends algorithm_CellGrid {
+  constructor(customConfig = {}) {
+    super({ ...customConfig,
+      useFutureArray: false
+    });
+    const config = { ...Pattern_defaultConfig,
+      ...customConfig
+    };
+    this.rule = config.rule;
+    this.rules = config.rules || this.getRules();
+  }
+
+  runAnimationAlgorithm() {
+    this.shiftPixelsUp();
+    this.context.beginPath();
+    this.currentPixelArray.forEach((col, colIndex) => {
+      col.forEach((cell, rowIndex) => {
+        if (this.currentPixelArray[colIndex][rowIndex].isAlive()) {
+          this.context.rect(cell.x, cell.y, this.pixelSize, this.pixelSize);
+        }
+      });
+    });
+    this.context.fill();
+  }
+
+  initPixels() {
+    super.initPixels();
+    this.currentPixelArray[0].forEach((row, rowIndex) => {
+      this.currentPixelArray.forEach((col, colIndex) => {
+        if (rowIndex === 0) {
+          const random = Math.round(Math.random());
+          this.currentPixelArray[colIndex][rowIndex].setActiveState(random);
+        } else {
+          const activeState = this.applyRules(colIndex, rowIndex);
+          this.currentPixelArray[colIndex][rowIndex].setActiveState(activeState);
+        }
+      });
+    });
+  }
+
+  shiftPixelsUp() {
+    this.currentPixelArray[0].forEach((row, rowIndex) => {
+      this.currentPixelArray.forEach((col, colIndex) => {
+        if (rowIndex === col.length - 1) {
+          const activeState = this.applyRules(colIndex, rowIndex);
+          this.currentPixelArray[colIndex][rowIndex].setActiveState(activeState);
+        } else {
+          this.currentPixelArray[colIndex][rowIndex].setActiveState(this.currentPixelArray[colIndex][rowIndex + 1].activeState);
+        }
+      });
+    });
+  }
+
+  applyRules(colIndex, rowIndex) {
+    const neighbourhoodString = this.getNeighbourhoodString(colIndex, rowIndex);
+
+    if (this.rules[neighbourhoodString] !== undefined) {
+      return this.rules[neighbourhoodString];
+    }
+
+    if (this.rules.default !== undefined) {
+      return this.rules.default;
+    }
+
+    const lastCell = this.getCellRepeated(colIndex, rowIndex - 1);
+    return lastCell.activeState;
+  }
+
+  getRules() {
+    /* eslint-disable quote-props */
+    const biniaryString = this.rule.toString(2);
+    const biniaryArray = Array.from(biniaryString).reverse();
+    return {
+      '000': +biniaryArray[0] || 0,
+      '001': +biniaryArray[1] || 0,
+      '010': +biniaryArray[2] || 0,
+      '011': +biniaryArray[3] || 0,
+      '100': +biniaryArray[4] || 0,
+      '101': +biniaryArray[5] || 0,
+      '110': +biniaryArray[6] || 0,
+      '111': +biniaryArray[7] || 0
+    };
+  }
+
+  getNeighbourhoodString(colIndex, rowIndex) {
+    const cell1 = this.getCellRepeated(colIndex - 1, rowIndex - 1);
+    const cell2 = this.getCellRepeated(colIndex, rowIndex - 1);
+    const cell3 = this.getCellRepeated(colIndex + 1, rowIndex - 1);
+    return `${cell1.activeState}${cell2.activeState}${cell3.activeState}`;
+  }
+
+}
+
+/* harmony default export */ var algorithm_Pattern = (Pattern_Pattern);
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CellularAutomataPattern.vue?vue&type=script&lang=js&shadow
 //
 //
 //
@@ -710,12 +1041,102 @@ var staticRenderFns = []
 //
 //
 //
-/* harmony default export */ var CellularAutomatavue_type_script_lang_js_shadow = ({
-  props: ['test']
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ var CellularAutomataPatternvue_type_script_lang_js_shadow = ({
+  name: 'CellularAutomataPattern',
+  props: {
+    rule: {
+      type: Number,
+      required: true
+    },
+    width: {
+      type: Number,
+      default: 500
+    },
+    height: {
+      type: Number,
+      default: 300
+    },
+    pixelWidth: {
+      type: Number,
+      default: 10
+    },
+    pixelHeight: {
+      type: Number,
+      default: 10
+    },
+    backgroundColor: {
+      type: String,
+      default: '#FFF'
+    },
+    pixelColor: {
+      type: String,
+      default: '#FFF'
+    },
+    renderType: {
+      validator: function (value) {
+        return ['canvas', 'svg'].indexOf(value) !== -1;
+      },
+      default: 'canvas'
+    }
+  },
+
+  data() {
+    return {
+      pattern: null
+    };
+  },
+
+  watch: {
+    pixelColor: function () {
+      this.setPattern();
+    }
+  },
+
+  mounted() {
+    this.initSize();
+    this.setPattern();
+  },
+
+  updated() {
+    console.log('update');
+    this.setPattern();
+  },
+
+  methods: {
+    initSize() {
+      if (this.$refs.element) {
+        this.$refs.element.width = this.width;
+        this.$refs.element.height = this.height;
+      }
+    },
+
+    setPattern() {
+      const context = this.$refs.element.getContext('2d');
+      context.clearRect(0, 0, this.$refs.element.width, this.$refs.element.height);
+      this.pattern = new algorithm_Pattern({
+        rule: this.rule,
+        fillStyle: this.pixelColor // pixelSize: this.pixelSize,
+
+      });
+      this.pattern.init(this.$refs.element, context);
+      this.pattern.runAnimationAlgorithm();
+    }
+
+  }
 });
-// CONCATENATED MODULE: ./src/components/CellularAutomata.vue?vue&type=script&lang=js&shadow
- /* harmony default export */ var components_CellularAutomatavue_type_script_lang_js_shadow = (CellularAutomatavue_type_script_lang_js_shadow); 
-// CONCATENATED MODULE: ./src/components/CellularAutomata.vue?shadow
+// CONCATENATED MODULE: ./src/components/CellularAutomataPattern.vue?vue&type=script&lang=js&shadow
+ /* harmony default export */ var components_CellularAutomataPatternvue_type_script_lang_js_shadow = (CellularAutomataPatternvue_type_script_lang_js_shadow); 
+// CONCATENATED MODULE: ./src/components/CellularAutomataPattern.vue?shadow
 
 
 
@@ -724,7 +1145,7 @@ var staticRenderFns = []
 /* normalize component */
 
 var component = normalizeComponent(
-  components_CellularAutomatavue_type_script_lang_js_shadow,
+  components_CellularAutomataPatternvue_type_script_lang_js_shadow,
   render,
   staticRenderFns,
   false,
@@ -734,7 +1155,7 @@ var component = normalizeComponent(
   ,true
 )
 
-/* harmony default export */ var CellularAutomatashadow = (component.exports);
+/* harmony default export */ var CellularAutomataPatternshadow = (component.exports);
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-wc.js
 
 
@@ -746,7 +1167,7 @@ var component = normalizeComponent(
 
 
 
-window.customElements.define('cellular-automata', vue_wc_wrapper(external_Vue_default.a, CellularAutomatashadow))
+window.customElements.define('cellular-automata-pattern', vue_wc_wrapper(external_Vue_default.a, CellularAutomataPatternshadow))
 
 /***/ }),
 
@@ -843,4 +1264,4 @@ module.exports = Vue;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=cellular-automata.js.map
+//# sourceMappingURL=cellular-automata-pattern.js.map

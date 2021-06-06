@@ -695,14 +695,14 @@ function normalizeComponent (
   }
 }
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"7c389f7a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CellularAutomata.vue?vue&type=template&id=1a477660&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"7c389f7a-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CellularAutomata.vue?vue&type=template&id=53b18775&shadow
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._v(" Cellular Automata Component "),_c('div',[_vm._v(_vm._s(_vm.test))])])}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/CellularAutomata.vue?vue&type=template&id=1a477660&
+// CONCATENATED MODULE: ./src/components/CellularAutomata.vue?vue&type=template&id=53b18775&shadow
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CellularAutomata.vue?vue&type=script&lang=js&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CellularAutomata.vue?vue&type=script&lang=js&shadow
 //
 //
 //
@@ -710,12 +710,12 @@ var staticRenderFns = []
 //
 //
 //
-/* harmony default export */ var CellularAutomatavue_type_script_lang_js_ = ({
+/* harmony default export */ var CellularAutomatavue_type_script_lang_js_shadow = ({
   props: ['test']
 });
-// CONCATENATED MODULE: ./src/components/CellularAutomata.vue?vue&type=script&lang=js&
- /* harmony default export */ var components_CellularAutomatavue_type_script_lang_js_ = (CellularAutomatavue_type_script_lang_js_); 
-// CONCATENATED MODULE: ./src/components/CellularAutomata.vue
+// CONCATENATED MODULE: ./src/components/CellularAutomata.vue?vue&type=script&lang=js&shadow
+ /* harmony default export */ var components_CellularAutomatavue_type_script_lang_js_shadow = (CellularAutomatavue_type_script_lang_js_shadow); 
+// CONCATENATED MODULE: ./src/components/CellularAutomata.vue?shadow
 
 
 
@@ -724,7 +724,7 @@ var staticRenderFns = []
 /* normalize component */
 
 var component = normalizeComponent(
-  components_CellularAutomatavue_type_script_lang_js_,
+  components_CellularAutomatavue_type_script_lang_js_shadow,
   render,
   staticRenderFns,
   false,
@@ -734,13 +734,7 @@ var component = normalizeComponent(
   ,true
 )
 
-/* harmony default export */ var CellularAutomata = (component.exports);
-// CONCATENATED MODULE: ./src/main.js?shadow
-
-
-
-const CellularAutomataComponent = vue_wc_wrapper(external_Vue_default.a, CellularAutomata);
-window.customElements.define('cellular-automata', CellularAutomataComponent);
+/* harmony default export */ var CellularAutomatashadow = (component.exports);
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-wc.js
 
 
@@ -752,7 +746,7 @@ window.customElements.define('cellular-automata', CellularAutomataComponent);
 
 
 
-window.customElements.define('cellular-automata', vue_wc_wrapper(external_Vue_default.a, /* Cannot get final name for export "default" in "./src/main.js?shadow" (known exports: , known reexports: ) */ undefined))
+window.customElements.define('cellular-automata', vue_wc_wrapper(external_Vue_default.a, CellularAutomatashadow))
 
 /***/ }),
 

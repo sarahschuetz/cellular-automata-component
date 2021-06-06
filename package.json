@@ -14,7 +14,7 @@
   "homepage": "https://github.com/sarahschuetz/cellular-automata-component#readme",
   "main": "./dist/cellular-automata.min.js",
   "scripts": {
-    "build": "vue-cli-service build --target wc --name cellular-automata ./src/components/CellularAutomata.vue --inline-vue"
+    "build": "vue-cli-service build --target wc --name cellular-automata ./src/components/CellularAutomata.vue"
   },
   "dependencies": {
     "core-js": "^3.6.5",
